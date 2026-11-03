@@ -85,7 +85,7 @@ Requisitos: Python 3.10 o superior y Docker Desktop.
 3. Crear `.env` copiando `.env.example`. El valor incluido corresponde a la configuración de `docker-compose.yml`:
 
    ```env
-   DATABASE_URL=postgresql://postgres:postgres@localhost:5433/veterinaria
+   DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5433/veterinaria
    ```
 
 4. Iniciar PostgreSQL y aplicar la migración:
@@ -133,7 +133,7 @@ Los errores usan la estructura `{"error":{"code":"...","message":"...","details"
 Las pruebas de API usan SQLite en memoria, así que no requieren iniciar Docker:
 
 ```bash
-pytest -v tests_manual
+python -m pytest -v tests_manual
 ```
 
 La suite comprueba CRUD, validación, relaciones, reglas de consultas, filtrado/orden/paginación y lectura de los datos persistidos entre solicitudes. Para comprobar persistencia tras reiniciar el proceso, iniciar la API contra PostgreSQL, crear un registro, reiniciar Uvicorn y volver a consultar el mismo ID.

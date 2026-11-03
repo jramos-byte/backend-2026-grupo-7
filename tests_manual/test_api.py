@@ -4,7 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
-from infrastructure.database import Base, get_db
+from infrastructure.database import Base
+from presentation.dependencies import get_db
 
 
 def create_owner(client):
@@ -99,7 +100,7 @@ def test_crud_de_estudiante_dueno_y_consulta(client):
 
 
 def test_registros_persisten_al_reiniciar_cliente(tmp_path):
-    engine = create_engine(f"sqlite:///{tmp_path / 'persistencia.db'}")
+    engine = create_engine(f"sqlite:///{tmp_path / 'persistencia.db'}", connect_args={"check_same_thread": False})
     Base.metadata.create_all(bind=engine)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
