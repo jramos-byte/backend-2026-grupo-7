@@ -34,3 +34,32 @@ class ConsultaResponse(ConsultaBase):
 
     class Config:
         from_attributes = True
+        
+class DuenoBase(BaseModel):
+    rut: str = Field(..., min_length=9, max_length=12)
+    nombre_completo: str = Field(..., min_length=3, max_length=100)
+    telefono: str = Field(..., min_length=8, max_length=20)
+    direccion: str = Field(..., min_length=5, max_length=200)
+
+class DuenoCreate(DuenoBase):
+    pass
+
+class DuenoResponse(DuenoBase):
+    id: int
+    class Config:
+        from_attributes = True
+
+class MascotaBase(BaseModel):
+    nombre: str = Field(..., min_length=2, max_length=50)
+    especie: str = Field(..., min_length=3, max_length=50)
+    raza: str = Field(..., min_length=3, max_length=50)
+    peso_kg: float = Field(..., gt=0.0) # gt = mayor que 0
+    dueño_id: int
+
+class MascotaCreate(MascotaBase):
+    pass
+
+class MascotaResponse(MascotaBase):
+    id: int
+    class Config:
+        from_attributes = True
