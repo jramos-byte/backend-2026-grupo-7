@@ -22,9 +22,11 @@ Ejecucion del Proyecto
     alembic upgrade head
 
 4. Ejecutar seeders:
-    Para cargar los registros de prueba por entidad, ejecuta este comando en la terminal:
-   "python -c "from infrastructure.database import SessionLocal; from infrastructure.seeders.seeder import cargar_datos_iniciales; db = SessionLocal(); cargar_datos_iniciales(db); db.close()""
+    Para cargar los registros de prueba por entidad, ejecutar el siguiente comando en la  terminal:
+    ```bash
+   python -c "from infrastructure.database import SessionLocal; from infrastructure.seeders.seeder import cargar_datos_iniciales; db = SessionLocal(); cargar_datos_iniciales(db); db.close()"
 
 5. Configurar variables de entorno:
    "Crea un archivo `.env` en la raíz del proyecto guiándote por `.env.example` y define la conexión a la base de datos:
+   ```bash
    DATABASE_URL=postgresql://postgres:postgres@localhost:5433/veterinaria"
