@@ -30,3 +30,10 @@ Ejecucion del Proyecto
    "Crea un archivo `.env` en la raíz del proyecto guiándote por `.env.example` y define la conexión a la base de datos:
    ```bash
    DATABASE_URL=postgresql://postgres:postgres@localhost:5433/veterinaria"
+
+Validaciones (DTOs):
+   Se implementaron esquemas Pydantic para validar los datos de entrada antes de interactuar con la base de datos:
+   - Longitud de caracteres (ej. RUT, teléfono, nombres).
+   - Formatos específicos (correos electrónicos).
+   - Rangos numéricos (peso mayor a 0, año de ingreso coherente).
+   - Valores permitidos mediante Enum (estados de consulta).
