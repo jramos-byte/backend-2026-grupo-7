@@ -34,7 +34,9 @@ class Mascota(Base):
     especie = Column(String(50), nullable=False)
     raza = Column(String(50), nullable=False)
     peso_kg = Column(Float, nullable=False)
-    dueño_id = Column(Integer, ForeignKey("duenos.id"), nullable=False)
+    # El nombre de la columna se conserva para no romper la migración existente;
+    # el atributo Python y el contrato HTTP usan ASCII.
+    dueno_id = Column("dueño_id", Integer, ForeignKey("duenos.id"), nullable=False)
     dueno = relationship("Dueno", back_populates="mascotas")
     consultas = relationship("Consulta", back_populates="mascota")
 
