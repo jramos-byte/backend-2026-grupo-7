@@ -14,9 +14,11 @@ Ejecucion del Proyecto
     docker compose up -d
 
 2. instalar dependencias:
+    ```bash
     pip install fastapi uvicorn sqlalchemy psycopg2-binary pydantic alembic
 
 3. Ejecutar migraciones(Alembic):
+    ```bash
     alembic upgrade head
 
 4. Ejecutar seeders:
