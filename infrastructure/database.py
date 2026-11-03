@@ -1,6 +1,9 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Lee la URL de la base de datos desde las variables de entorno
 # Si no existe, usa una por defecto (ajusta el usuario, contraseña y puerto a los de tu Docker)
