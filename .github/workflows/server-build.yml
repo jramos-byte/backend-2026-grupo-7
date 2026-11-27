@@ -33,4 +33,4 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ghcr.io/${{ steps.owner.outputs.lc }}/ backend-2026-grupo-7-server:latest
+          tags: ghcr.io/${{ steps.owner.outputs.lc }}/backend-2026-grupo-7-server:latest
