@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Redeploy client2 en Kubero
-        if: ${{ github.event.workflow_run.name == 'Build client image' }}
+        if: ${{ github.event.workflow_run.name == 'Build server image' }}
         run: |
           curl -s -o /dev/null -w "Client: %{http_code}\n" -X GET \
-            "https://kubero.inf.uct.cl/api/apps/ejemplo/production/client2/restart" \
+            "https://kubero.inf.uct.cl/api/apps/grupo7backends3/production/api/restart" \
             -H "Authorization: Bearer ${{ secrets.KUBERO_TOKEN }}"
