@@ -1,0 +1,21 @@
+name: Deploy to Kubero
+
+on:
+  workflow_run:
+    workflows: ["Build server image"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy-kubero:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Redeploy client2 en Kubero
+        if: ${{ github.event.workflow_run.name == 'Build client image' }}
+        run: |
+          curl -s -o /dev/null -w "Client: %{http_code}\n" -X GET \
+            "https://kubero.inf.uct.cl/api/apps/ejemplo/production/client2/restart" \
+            -H "Authorization: Bearer ${{ secrets.KUBERO_TOKEN }}"
