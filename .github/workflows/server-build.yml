@@ -34,7 +34,7 @@ jobs:
         run: ruff check .
 
       - name: Run tests with Pytest
-        run: pytest
+        run: python -m pytest -v tests_manual
 
   build:
     needs: test-and-lint

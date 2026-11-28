@@ -100,9 +100,13 @@ Requisitos: Python 3.10 o superior y Docker Desktop.
    docker compose exec api python -c "from infrastructure.database import SessionLocal; from infrastructure.seeders.seeder import cargar_datos_iniciales; db = SessionLocal(); cargar_datos_iniciales(db); db.close()"
    ```
 
-6. La API queda disponible en:
+6. Los servicios locales quedan disponibles en:
 
-   Documentación interactiva: <http://127.0.0.1:8000/docs>. Estado del servicio: <http://127.0.0.1:8000/health>. Para detener los contenedores: `docker compose down`.
+   - **Documentación interactiva (Swagger):** <http://127.0.0.1:8000/docs>
+   - **Estado del servicio (Healthcheck):** <http://127.0.0.1:8000/health>
+   - **Visualizador de base de datos (Adminer):** <http://127.0.0.1:8080> (Sistema: `PostgreSQL`, Servidor: `db`, Usuario: `postgres`, Contraseña: `postgres`, Base de datos: `veterinaria`)
+
+   Para detener los contenedores conservando los datos en el volumen `postgres_data`: `docker compose down`.
 
 ## Endpoints
 
@@ -140,3 +144,24 @@ alembic upgrade head       # aplicar migraciones
 alembic current            # revisar versión aplicada
 alembic revision --autogenerate -m "descripcion"  # generar una nueva revisión
 ```
+
+## Integración y Despliegue Continuo (CI/CD)
+
+El repositorio cuenta con dos flujos automatizados en `.github/workflows/`:
+
+1. **`server-build.yml` (CI + Construcción de imagen):** se ejecuta en cada `push` y `pull_request` hacia `main`. Valida formato (`black`), linting (`ruff`) y pruebas automatizadas (`python -m pytest -v tests_manual`), bloqueando el avance si alguna verificación falla. Si las validaciones pasan en `main`, construye la imagen Docker y la publica en GitHub Container Registry (`ghcr.io`).
+2. **`deploy.yml` (Despliegue continuo en Kuberus UCT):** al completarse exitosamente `Build server image` en `main`, dispara el reinicio controlado de la aplicación en el clúster Kubero UCT mediante `KUBERO_TOKEN`.
+
+## Despliegue en Producción (Kuberus UCT)
+
+La aplicación se encuentra desplegada en el clúster de la universidad bajo el pipeline `grupo7backends3` (entorno `Producción`):
+
+- **URL base (HTTPS):** <https://apibackends.inf.uct.cl>
+- **Documentación OpenAPI:** <https://apibackends.inf.uct.cl/docs>
+- **Endpoint de salud:** <https://apibackends.inf.uct.cl/health>
+- **Endpoints CRUD:** <https://apibackends.inf.uct.cl/api/v1/students>, `/owners`, `/pets`, `/consultations`
+
+### Procedimiento de verificación y reversión (Rollback)
+
+- **Verificación:** comprobar estado verde en el mapa de aplicación de Kubero (`api` y complemento `PostgreSQL` en estado `Listo`) y respuesta `200 OK` en `/health` y `/docs`.
+- **Reversión:** en caso de detectar un error tras un despliegue, ingresar al panel de **Kubero UCT → Pipelines → `grupo7backends3` → `api` → ACCIONES / Compilaciones**, seleccionar la revisión o imagen estable anterior en `ghcr.io` y ejecutar el redespliegue, o revertir el commit problemático en `main` para disparar automáticamente el pipeline con la versión anterior.
