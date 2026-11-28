@@ -6,10 +6,38 @@ on:
     paths:
       - './**'
       - '.github/workflows/server-build.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest ruff black
+
+      - name: Check formatting with Black
+        run: black --check .
+
+      - name: Lint with Ruff
+        run: ruff check .
+
+      - name: Run tests with Pytest
+        run: pytest
+
   build:
+    needs: test-and-lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,6 +59,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./
-          push: true
+          context: .
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ghcr.io/${{ steps.owner.outputs.lc }}/backend-2026-grupo-7-server:latest
