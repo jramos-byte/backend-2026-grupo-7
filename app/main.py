@@ -39,11 +39,30 @@ app.add_middleware(
     ],
 )
 
+
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError,
+):
+    details = [
+        {
+            "loc": error["loc"],
+            "msg": "Valor no valido",
+            "type": error["type"],
+        }
+        for error in exc.errors()
+    ]
+
     return JSONResponse(
         status_code=422,
-        content={"error": {"code": "VALIDATION_ERROR", "message": "Los datos enviados no son válidos.", "details": jsonable_encoder(exc.errors())}},
+        content={
+            "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "Los datos enviados no son validos.",
+                "details": details,
+            }
+        },
     )
 
 
