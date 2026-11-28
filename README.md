@@ -88,26 +88,21 @@ Requisitos: Python 3.10 o superior y Docker Desktop.
    DATABASE_URL=postgresql+psycopg2://postgres:postgres@localhost:5433/veterinaria
    ```
 
-4. Iniciar PostgreSQL y aplicar la migración:
+4. Construir e iniciar la base de datos y la API. Al arrancar, el contenedor de la API espera a que PostgreSQL esté listo y aplica las migraciones:
 
    ```bash
-   docker compose up -d
-   alembic upgrade head
+   docker compose up --build -d
    ```
 
 5. Cargar los datos de demostración (se omite la carga si alguna de las tablas ya tiene registros):
 
    ```bash
-   python -c "from infrastructure.database import SessionLocal; from infrastructure.seeders.seeder import cargar_datos_iniciales; db = SessionLocal(); cargar_datos_iniciales(db); db.close()"
+   docker compose exec api python -c "from infrastructure.database import SessionLocal; from infrastructure.seeders.seeder import cargar_datos_iniciales; db = SessionLocal(); cargar_datos_iniciales(db); db.close()"
    ```
 
-6. Iniciar la API:
+6. La API queda disponible en:
 
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-   Documentación interactiva: <http://127.0.0.1:8000/docs>. Estado del servicio: <http://127.0.0.1:8000/health>.
+   Documentación interactiva: <http://127.0.0.1:8000/docs>. Estado del servicio: <http://127.0.0.1:8000/health>. Para detener los contenedores: `docker compose down`.
 
 ## Endpoints
 
