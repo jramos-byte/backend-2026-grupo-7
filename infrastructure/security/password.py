@@ -12,11 +12,15 @@ hasher = PasswordHasher(
     type=Type.ID,
 )
 
-
 def validar_password(password: str) -> None:
     if len(password) < 12:
         raise ValueError(
             "La contraseña debe tener al menos 12 caracteres."
+        )
+
+    if len(password) > 128:
+        raise ValueError(
+            "La contraseña no puede superar los 128 caracteres."
         )
 
 

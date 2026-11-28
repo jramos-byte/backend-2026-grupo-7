@@ -42,3 +42,11 @@ def test_salt_aleatorio():
     hash2 = hash_password(PASSWORD)
 
     assert hash1 != hash2
+
+def test_password_longitud_maxima():
+    assert validar_password("a" * 128) is None
+
+
+def test_password_demasiado_larga():
+    with pytest.raises(ValueError):
+        validar_password("a" * 129)
