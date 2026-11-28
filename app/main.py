@@ -9,6 +9,8 @@ from presentation.routers.consultations import router as consultations_router
 from presentation.routers.owners import router as owners_router
 from presentation.routers.pets import router as pets_router
 from presentation.routers.students import router as students_router
+from fastapi.middleware.cors import CORSMiddleware
+from presentation.security.csrf import ALLOWED_ORIGINS
 
 app = FastAPI(
     title="API Clínica Veterinaria",
@@ -19,6 +21,23 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS",
+    ],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+    ],
+)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
