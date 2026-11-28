@@ -1,20 +1,54 @@
-from sqlalchemy.orm import Session
-from infrastructure.models.models import Estudiante, Dueno, Mascota, Consulta, EstadoConsulta
 from datetime import datetime, timedelta
+from sqlalchemy.orm import Session
+from infrastructure.models.models import (
+    Consulta,
+    Dueno,
+    EstadoConsulta,
+    Estudiante,
+    Mascota,
+    Rol,
+    Usuario,
+)
+
 
 def cargar_datos_iniciales(db: Session):
-    # No vuelve a insertar datos si ya existe información en cualquiera de las tablas.
+    # 0. Roles y Usuarios iniciales de seguridad
+    if not db.query(Rol).first():
+        rol_admin = Rol(name="admin", description="Administrador del sistema")
+        rol_vet = Rol(name="veterinario", description="Médico veterinario supervisor")
+        rol_est = Rol(name="estudiante", description="Estudiante en práctica clínica")
+        db.add_all([rol_admin, rol_vet, rol_est])
+        db.commit()
+
+        admin_user = Usuario(
+            email="admin@uct.cl",
+            hashed_password="pbkdf2:sha256:placeholder_hash_admin123",
+            full_name="Administrador Clínica",
+            is_active=True,
+            role_id=rol_admin.id,
+        )
+        vet_user = Usuario(
+            email="veterinario@uct.cl",
+            hashed_password="pbkdf2:sha256:placeholder_hash_vet123",
+            full_name="Dra. Laura Méndez",
+            is_active=True,
+            role_id=rol_vet.id,
+        )
+        db.add_all([admin_user, vet_user])
+        db.commit()
+
+    # No vuelve a insertar datos clínicos si ya existe información
     if any(db.query(model).first() for model in (Estudiante, Dueno, Mascota, Consulta)):
         return
 
-    # 1.Crea Estudiantes
+    # 1. Crea Estudiantes
     est1 = Estudiante(rut="19123456-7", nombre_completo="Valentina Rojas", correo="vrojas@uct.cl", anio_ingreso=2024)
     est2 = Estudiante(rut="19765432-1", nombre_completo="Felipe Cárdenas", correo="fcardenas@uct.cl", anio_ingreso=2024)
     est3 = Estudiante(rut="20111222-3", nombre_completo="Carla Morales", correo="cmorales@uct.cl", anio_ingreso=2025)
     est4 = Estudiante(rut="20333444-5", nombre_completo="Camila Soto", correo="csoto@uct.cl", anio_ingreso=2024)
     db.add_all([est1, est2, est3, est4])
-    
-    # 2.Crea Dueños
+
+    # 2. Crea Dueños
     d1 = Dueno(rut="15111222-3", nombre_completo="Carlos Pinto", telefono="+56912345678", direccion="Av. Alemania 123")
     d2 = Dueno(rut="16222333-4", nombre_completo="Maria Silva", telefono="+56987654321", direccion="Caupolicán 456")
     d3 = Dueno(rut="17444555-6", nombre_completo="Pedro Sanhueza", telefono="+56911223344", direccion="San Martín 789")
@@ -22,7 +56,7 @@ def cargar_datos_iniciales(db: Session):
     db.add_all([d1, d2, d3, d4])
     db.commit()
 
-    # 3.Crea Mascotas vinculadas a Dueños
+    # 3. Crea Mascotas vinculadas a Dueños
     m1 = Mascota(nombre="Rex", especie="Perro", raza="Pastor Alemán", peso_kg=25.5, dueno_id=d1.id)
     m2 = Mascota(nombre="Luna", especie="Gato", raza="Mestizo", peso_kg=4.2, dueno_id=d2.id)
     m3 = Mascota(nombre="Thor", especie="Perro", raza="Bulldog", peso_kg=18.0, dueno_id=d3.id)

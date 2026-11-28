@@ -6,7 +6,16 @@ from alembic import context
 
 # Importar tu configuración y modelos
 from infrastructure.database import Base, DATABASE_URL
-from infrastructure.models.models import Estudiante, Dueno, Mascota, Consulta
+from infrastructure.models.models import (
+    Consulta,
+    Dueno,
+    Estudiante,
+    Mascota,
+    RecuperacionContrasena,
+    Rol,
+    SessionUsuario,
+    Usuario,
+)
 
 config = context.config
 
